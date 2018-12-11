@@ -32,7 +32,6 @@ public:
 		bool operator==(Iterator)const;
 		bool operator!=(Iterator)const;
 		T& operator*()const;
-		bool isEmpty()const;
 	};
 
 private:
@@ -62,6 +61,7 @@ public:
 	void directWalkDemo()const;
 	Iterator begin()const;
 	Iterator end()const;
+	bool isEmpty()const;
 };
 
 /************************************************************************************************
@@ -420,7 +420,7 @@ int iter::nodeFind(int n)const {
 }
 
 template<class T,class comp>
-bool BSTree<T,comp>::isEmpty(){
+bool BSTree<T,comp>::isEmpty()const{
 if(m_pRoot==nullptr) return true;
 return false;
 }
