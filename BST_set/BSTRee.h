@@ -32,6 +32,7 @@ public:
 		bool operator==(Iterator)const;
 		bool operator!=(Iterator)const;
 		T& operator*()const;
+		bool isEmpty()const;
 	};
 
 private:
@@ -416,4 +417,10 @@ int iter::nodeFind(int n)const {
 		if (n == parent->nodes[i]->m_key) return i;
 	}
 	return -1;
+}
+
+template<class T,class comp>
+bool BSTree<T,comp>::isEmpty(){
+if(m_pRoot==nullptr) return true;
+return false;
 }
