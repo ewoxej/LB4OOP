@@ -24,7 +24,7 @@ public:
 		Iterator();
 		Iterator(const Iterator* _it, int p);
 		Iterator(const BSTree<T, comp>*,int _pos=0);
-		int nodeFind(int n)const;
+		int nodeFind(T n)const;
 		void operator=(const BSTree<T,comp>*);
 		Iterator operator++();
 		Iterator operator++(int);
@@ -45,6 +45,7 @@ private:
 	node_p findKeyNode(T _key)const;
 	void destroyNode(node_p _pNode);
 	void copyToNew(BSTree* new_tree,std::vector<Node*>* _nds)const;
+	BSTree<T, comp>::Node * minimumNode(BSTree::Node * _pNode);
 public:
 	BSTree();
 	BSTree(BSTree&);
@@ -61,7 +62,6 @@ public:
 	void directWalkDemo()const;
 	Iterator begin()const;
 	Iterator end()const;
-	bool isEmpty()const;
 };
 
 /************************************************************************************************
@@ -114,6 +114,17 @@ void BSTree<T, comp>::symmetricWalk()const
 		symmetricWalk(m_pRoot);
 		nonActual = false;
 	}
+}
+template<class T, class comp>
+typename BSTree<T,comp>::Node * BSTree<T,comp>::minimumNode(BSTree::Node * _pNode)
+{
+	assert(_pNode);
+
+	BSTree::Node * pCurrent = _pNode;
+	while (pCurrent && pCurrent->m_pLeft)
+		pCurrent = pCurrent->m_pLeft;
+
+	return pCurrent;
 }
 
 template<class T, class comp>
@@ -329,6 +340,7 @@ inline typename iter  BSTree<T, comp>::begin()const
 template<class T, class comp>
 inline typename iter  BSTree<T, comp>::end()const
 {
+	symmetricWalk();
 	Iterator tmp(this, nodes.size());
 	return tmp;
 }
@@ -347,16 +359,19 @@ inline iter::Iterator(const Iterator* _it,int p):nodes(_it->nodes),pos(p),parent
 key = parent->nodes[pos]->m_key;
 }
 
-template<class T, class comp>
-inline iter::Iterator(const BSTree* t, int _pos):parent(t)
-{
-	t->symmetricWalk(); pos = _pos; key = parent->nodes[0]->m_key;
-}
 
 template<class T, class comp>
 inline void iter::operator=(const BSTree* t):parent(t)
 {
 	t->symmetricWalk(); pos = 0; key = parent->nodes[0]->m_key;
+}
+
+template<class T, class comp>
+inline iter::Iterator(const BSTree* t, int _pos) :parent(t)
+{
+	t->symmetricWalk(); pos = _pos;
+	if (pos >= parent->nodes.size()) key = parent->nodes[pos - 1]->m_key;
+	else key = parent->nodes[pos]->m_key;
 }
 
 template<class T, class comp>
@@ -412,15 +427,10 @@ inline T& iter::operator*()const
 
 
 template<class T,class comp>
-int iter::nodeFind(int n)const {
+int iter::nodeFind(T n)const {
 	for (int i = 0; i < parent->nodes.size(); i++) {
 		if (n == parent->nodes[i]->m_key) return i;
 	}
 	return -1;
 }
 
-template<class T,class comp>
-bool BSTree<T,comp>::isEmpty()const{
-if(m_pRoot==nullptr) return true;
-return false;
-}
